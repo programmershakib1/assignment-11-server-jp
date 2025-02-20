@@ -9,6 +9,16 @@ This is the backend API for the Task Management application. It provides functio
 You can check out the live demo of the application here:  
 [Live Application](https://tasks-management-org.netlify.app)
 
+## Technologies Used
+
+The following technologies are used in the server-side of the project:
+
+- **Express.js**: A fast, unopinionated web framework for Node.js to handle routing and server-side logic.
+- **MongoDB**: A NoSQL database used for storing and managing application data.
+- **JWT (JSON Web Token)**: For secure authentication and authorization.
+- **Cors**: A package used to enable Cross-Origin Resource Sharing (CORS) in the server.
+- **dotenv**: Loads environment variables from a `.env` file into `process.env` for configuration management.
+
 ## Dependencies
 
 The following dependencies are used in this project:
