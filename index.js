@@ -175,7 +175,7 @@ async function run() {
       }
     });
     // user
-    // add and update user 
+    // add and update user
     app.put("/user", async (req, res) => {
       const { email, lastSignIn } = req.body;
       const userInfo = req.body;
