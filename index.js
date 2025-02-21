@@ -3,7 +3,22 @@ const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const http = require("http");
+const socketIo = require("socket.io");
+
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:5175",
+      "https://tasks-management-org.netlify.app",
+    ],
+    credentials: true,
+  },
+});
 
 const port = process.env.PORT || 5000;
 
@@ -36,13 +51,22 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // Send a ping to confirm a successful connection
-    // await client.db("admin").command({ ping: 1 }); 
+    // await client.db("admin").command({ ping: 1 });
     // console.log(
     //   "Pinged your deployment. You successfully connected to MongoDB!"
     // );
 
     const usersCollection = client.db("tasksDB").collection("users");
     const tasksCollection = client.db("tasksDB").collection("tasks");
+
+    io.on("connection", (socket) => {
+      socket.on("disconnect", () => {});
+    });
+
+    const changeStream = tasksCollection.watch();
+    changeStream.on("change", (change) => {
+      io.emit("taskUpdate", change);
+    });
 
     // jwt
     app.post("/jwt", async (req, res) => {
