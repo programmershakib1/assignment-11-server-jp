@@ -60,7 +60,11 @@ async function run() {
     const tasksCollection = client.db("tasksDB").collection("tasks");
 
     io.on("connection", (socket) => {
-      socket.on("disconnect", () => {});
+      console.log("A client connected:", socket.id);
+
+      socket.on("disconnect", () => {
+        console.log("A client disconnected:", socket.id);
+      });
     });
 
     const changeStream = tasksCollection.watch();
@@ -94,7 +98,7 @@ async function run() {
       });
     };
 
-    // get all tasks
+    // get all tasks for a user
     app.get("/tasks/:email", async (req, res) => {
       const email = req.params.email;
 
@@ -105,7 +109,7 @@ async function run() {
       res.send(result);
     });
 
-    // get task
+    // get all tasks for a user
     app.get("/task/:id", async (req, res) => {
       const id = req.params.id;
 
@@ -116,7 +120,7 @@ async function run() {
       res.send(result);
     });
 
-    // add task
+    // add new task
     app.post("/task", async (req, res) => {
       const taskInfo = req.body;
 
@@ -132,14 +136,7 @@ async function run() {
 
       const updatedDoc = {
         $set: {
-          title: req.body.title,
-          category: req.body.category,
-          description: req.body.description,
-          order: req.body.order,
-          timestamp: req.body.timestamp,
-          user_name: req.body.user_name,
-          user_email: req.body.user_email,
-          user_image: req.body.user_image,
+          ...req.body,
         },
       };
 
@@ -147,6 +144,7 @@ async function run() {
       res.send(result);
     });
 
+    // update task category
     app.patch("/task/:id", async (req, res) => {
       const id = req.params.id;
 
@@ -172,7 +170,7 @@ async function run() {
       res.send(result);
     });
 
-    // order save
+    // update task order
     app.post("/update-task-order", async (req, res) => {
       const { tasks } = req.body;
 
@@ -186,6 +184,7 @@ async function run() {
       try {
         const result = await tasksCollection.bulkWrite(updates);
         if (result.modifiedCount > 0) {
+          io.emit("taskUpdate", { operation: "reorder", data: tasks });
           res.send({ success: true, message: "Order updated successfully!" });
         } else {
           res
@@ -199,8 +198,8 @@ async function run() {
           .send({ success: false, message: "Internal Server Error" });
       }
     });
-    // user
-    // add and update user
+
+    // add or update user
     app.put("/user", async (req, res) => {
       const { email, lastSignIn } = req.body;
       const userInfo = req.body;
