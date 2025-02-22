@@ -26,8 +26,10 @@ The following dependencies are used in this project:
 - **cors**: ^2.8.5 - Middleware to enable Cross-Origin Resource Sharing.
 - **dotenv**: ^16.4.7 - Loads environment variables from a `.env` file into `process.env`.
 - **express**: ^4.21.2 - A web framework for Node.js to handle routing and HTTP requests.
+- **http**: ^0.0.1-security - Node's built-in HTTP module, included here for creating HTTP servers.
 - **jsonwebtoken**: ^9.0.2 - Used for secure JWT authentication.
 - **mongodb**: ^6.13.0 - MongoDB client for interacting with the MongoDB database.
+- **socket.io**: ^4.8.1 - Enables real-time, bidirectional communication between web clients and servers.
 
 ## Installation Steps
 
